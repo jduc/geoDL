@@ -128,6 +128,7 @@ def main():
                         call(['wget', 'ftp://' + url, '-nH', '-O', outname + suffix[r] + '.fq.gz'])
                     except FileNotFoundError:
                         print("ERROR: wget not found, please install and try again")
+                        sys.exit(1)
 
     print(Fore.BLUE  + 'All done, thanks for coming!\n' + Fore.RESET)
 

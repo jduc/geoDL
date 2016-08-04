@@ -59,5 +59,11 @@ Beta test
 ---------
 - Test install on MacOSx and Linux
 - Test python2 support
-- Test download 
+- Test handling of wget
+- Test a bunch of different GSE
+
+Changelog
+---------
+
+`changelog <changelog.md>`_
 
