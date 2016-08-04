@@ -1,4 +1,4 @@
-# patchnote
+# Changelog
 
 ## [Unreleased]
 
@@ -6,6 +6,7 @@
 ### Added
 - Changelog
 - Logo images
+
 ### Changed
 - README now works propery on pipy and contains a section about what test to do
 
