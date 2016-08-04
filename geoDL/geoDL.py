@@ -1,18 +1,24 @@
-#!/home/jduc/.virtualenvs/geoDL/bin/python3
+#!/bin/python
 """
 Download data from the EBI website using a GSE geo accession number. First search for the
-GSE number on EBI website to find the corresponding SRP number. Then fetch the meta_table and from
-there download all the links.
+GSE number on EBI website to find the corresponding SRP number. Then fetch the metadata download all
+the fastq links.
+
+url: https://github.com/jduc/geoDL/tree/master/geoDL 
+author: Julien Duc <julien_dot_duc_dot_0_at_gmail_dot_com>
 """
 
+from __future__ import print_function
 import re
 import sys
 import argparse
 import time
 from bs4 import BeautifulSoup
-from urllib import request
 from subprocess import call
 from colorama import init, Fore
+from six.moves.urllib.request import urlopen, urlretrieve
+
+__version__ = 'v1.0.b1'
 
 def main():
     link_re = re.compile('http://.*SRP\d+$')
@@ -23,10 +29,10 @@ def main():
       __ _ ___ ___|   \| |
      / _` / -_) _ \ |) | |__
      \__, \___\___/___/|____|
-     |___/                   v1.0b0
+     |___/                   {}
 
 ################################################################################
-    """
+    """.format(__version__)
     print(Fore.BLUE + logo + Fore.RESET)
 
 ### Argument parsing
@@ -50,7 +56,7 @@ def main():
         search_url = 'http://www.ebi.ac.uk/ena/data/warehouse/search?query=%22geo_accession=%22{geo}%22%22&result=study&display=xml'.format(geo=gse)
         try:
             print(' > Visiting EBI website...')
-            search_soup = BeautifulSoup(request.urlopen(search_url).read(), 'lxml')
+            search_soup = BeautifulSoup(urlopen(search_url).read(), 'lxml')
         except:
             print(Fore.RED + ' > ERROR: Page not found error... exiting!' + Fore.RESET)
             sys.exit(1)
@@ -62,20 +68,20 @@ def main():
                sys.exit(1)
 
         access = search_results[0].contents[0]
-        metafile = 'ebiMeta_{}.xls'.format(gse)
-        request.urlretrieve("http://www.ebi.ac.uk/ena/data/warehouse/filereport?accession={}&result=read_run&fields=study_accession,secondary_study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,scientific_name,instrument_model,library_layout,read_count,experiment_alias,run_alias,fastq_ftp&download=txt".format(access),
+        metafile = 'metadata_{}.xls'.format(gse)
+        urlretrieve("http://www.ebi.ac.uk/ena/data/warehouse/filereport?accession={}&result=read_run&fields=study_accession,secondary_study_accession,sample_accession,secondary_sample_accession,experiment_accession,run_accession,scientific_name,instrument_model,library_layout,read_count,experiment_alias,run_alias,fastq_ftp&download=txt".format(access),
                             metafile)
         print(' > Metafile retrieved {}!'.format(metafile))
     else:
         print('\nUsing the {} metadata file...'.format(gse))
-        metafile = 'ebimeta_{}.xls'.format(gse)
+        metafile = 'metadata_{}.xls'.format(gse)
 
 ### Get the correspondance table for the name
     print('Getting correspondance table from GEO...')
     geo_url = 'http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={}'.format(gse)
 
     try:
-        geo_soup = BeautifulSoup(request.urlopen(geo_url).read(), 'html.parser')
+        geo_soup = BeautifulSoup(urlopen(geo_url).read(), 'html.parser')
     except URLError:
         print(Fore.RED + ' > ERROR: Could not reach GEO website... exiting!' + Fore.RESET)
         sys.exit(1)
@@ -118,7 +124,10 @@ def main():
                 if args.dry:
                     print(' '.join(['wget', 'ftp://' + url, '-nH', '-O', outname + suffix[r] + '.fq.gz']))
                 else:
-                    call(['wget', 'ftp://' + url, '-nH', '-O', outname + suffix[r] + '.fq.gz'])
+                    try:
+                        call(['wget', 'ftp://' + url, '-nH', '-O', outname + suffix[r] + '.fq.gz'])
+                    except FileNotFoundError:
+                        print("ERROR: wget not found, please install and try again")
 
     print(Fore.BLUE  + 'All done, thanks for coming!\n' + Fore.RESET)
 
