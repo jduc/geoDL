@@ -2,9 +2,7 @@
 geoDL
 **************************************************
 
-.. warning:: Please note that geoDL is in beta version, though expect bug and updates
-
-.. includeliteral:: logo.txt
+**Please note that geoDL is in beta version, though expect bug and updates**
 
 geoDL is a python program to download FASTQ files from
 `GEO-NCBI <http://www.ncbi.nlm.nih.gov/geo/>`_. The program inputs a #GEO access number and 
@@ -54,8 +52,3 @@ Download only some samples:
 .. code-block:: bash
 
     $ geoDL GSE13373 -s GSM00001 GSM00003
-
-
--------------------
-|pypi| |unix_build|
--------------------
