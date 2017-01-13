@@ -12,12 +12,13 @@ import re
 import sys
 import argparse
 import time
+import csv
 from bs4 import BeautifulSoup
 from subprocess import call
 from colorama import init, Fore
 from six.moves.urllib.request import urlopen, urlretrieve
 
-__version__ = 'v1.0.b2'
+__version__ = 'v1.0.b3'
 logo="""
 ################################################################################
                ___  _
@@ -33,12 +34,12 @@ class SmartFormatter(argparse.HelpFormatter):
     """Quick hack for formatting helper of argparse with new lines"""
     def _split_lines(self, text, width):
         if text.startswith('R|'):
-            return text[2:].splitlines()  
+            return text[2:].splitlines()
         # this is the RawTextHelpFormatter._split_lines
         return argparse.HelpFormatter._split_lines(self, text, width)
 
 def raiseError(errormsg):
-    print(Fore.RED + errormsg + Fore.RESET)
+    print("\n" + Fore.RED + errormsg + Fore.RESET)
     sys.exit(1)
 
 
@@ -50,30 +51,33 @@ def main():
                                      <http://www.ebi.ac.uk/ena> website using a GSE geo
                                      <http://www.ncbi.nlm.nih.gov/geo/info/seq.html> accession, ENA
                                      study accession or a metadata file from ENA""",
-                                     formatter_class=SmartFormatter)
+                                     formatter_class=SmartFormatter, 
+                                     epilog='Made with <3 at the batcave')
     parser.add_argument('mode', choices=['geo', 'meta', 'ena'],
                         help="Specify which type of input")
-    parser.add_argument('inputvalue', metavar='GSE|metadata|ENA', 
+    parser.add_argument('inputvalue', metavar='GSE|metadata|ENA',
                         help="""R|geo:  GSE accession number, eg: GSE13373
       Map the GSE accession to the ENA study accession and fetch the metadata
- 
+
 meta: Use metadata file instead of fetching it on ENA website (bypass GEO)
       Meta data should include at minima the following columns: ['Fastq files
       (ftp)', 'Submitter's sample name']
 
 ena:  ENA study accession number, eg: PRJEB13373
-      Use metadata file instead of fetching it on ENA website (bypass GEO)
       Fetch the metadata directely on the ENA website""")
     parser.add_argument('--dry', action='store_true',
                         help="Don't actually download anything, just print the wget cmds")
     parser.add_argument('--samples', type=str, default=[], nargs='*',
                         help="Space separated list of GSM samples to download.\
                         For ENA mode, subset the metadata")
+    parser.add_argument('--colname', type=str, default='sample_alias',
+                        help="Name of the column to use in the metadata file \
+                        to name the samples")
     args = parser.parse_args()
     mode = args.mode.strip()
     inputvalue = args.inputvalue
     samples = args.samples
-
+    colname = args.colname
 
 ### Find the META table on ENA website
     if mode == 'geo':
@@ -119,6 +123,24 @@ ena:  ENA study accession number, eg: PRJEB13373
     elif mode == 'meta':
         print('\nUsing the {} metadata file ony (bypass GEO)...'.format(inputvalue))
         metafile = inputvalue
+        # check that the column selected for naming is uniq
+        with open(metafile) as f:
+            reader = csv.reader(f, delimiter='\t')
+            samplenames = []
+            for i,row in enumerate(reader):
+                if i == 0: 
+                    if colname not in row:
+                        raiseError("  > ERROR: Column {col} not in the metadata file "
+                                   "{meta}".format(col=colname, meta=metafile))
+                    for j, c in enumerate(row):
+                        if c == colname:
+                            idx = j
+                else:
+                    print(row[idx])
+                    samplenames.append(row[idx])
+                    if row[idx] in samplenames:
+                        raiseError("  > ERROR: Non uniq sample names in the column {col} "
+                                   "of the meta file {meta}".format(col=colname, meta=metafile))
 
 ### Start the download from metadata
     print('Starting the downloads...\n')
@@ -147,7 +169,7 @@ ena:  ENA study accession number, eg: PRJEB13373
                     continue
                 log.write(gsm +  ' --> ' +  outname + '\n')
             else:
-                outname = data['sample_alias'].replace(' ', '_')
+                outname = data[colname].replace(' ', '_')
             if len(data_urls) == 2:  # paired end
                 suffix = ['_R1', '_R2']
                 pair = True

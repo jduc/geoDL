@@ -25,20 +25,41 @@ On linux and MacOSx
 
     $ sudo pip install geoDL
 
-Usage
--------
+To install locally, use the `--user` option:
 .. code-block:: bash
 
-    usage: geoDL [-h] [-m] [-d] [-s [SAMPLES [SAMPLES ...]]] GSE
+    $ sudo pip install --user geoDL
 
-``GSE`` is a GEO accession number, eg: GSE13373
+Note it is possible that the flag `--pre` is needed for installing the beta version.
 
-optional arguments:
+Usage
+-------
 
-    -h, --help      show help message and exit
-    -m, --meta      Use metadata file instead of fetching it on EBI website
-    -d, --dry       Don't actually download anything, just print the wget commands
-    -s, --samples   Space separated list of GSM samples to download
+.. code-block:: bash
+
+    usage: geoDL.py [-h] [--dry] [--samples [SAMPLES [SAMPLES ...]]] [--colname COLNAME]
+                    {geo,meta,ena} GSE|metadata|ENA
+
+  {geo,meta,ena}        Specify which type of input
+  GSE|metadata|ENA      geo:  GSE accession number, eg: GSE13373
+                              Map the GSE accession to the ENA study accession and fetch the metadata
+
+                        meta: Use metadata file instead of fetching it on ENA website (bypass GEO)
+                              Meta data should include at minima the following columns: ['Fastq files
+                              (ftp)', 'Submitter's sample name']
+
+                        ena:  ENA study accession number, eg: PRJEB13373
+                              Fetch the metadata directely on the ENA website
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --dry                 Don't actually download anything, just print the wget
+                            cmds
+      --samples [SAMPLES [SAMPLES ...]]
+                            Space separated list of GSM samples to download. For
+                            ENA mode, subset the metadata
+      --colname COLNAME     Name of the column to use in the metadata file to name
+                            the samples
 
 
 Example
@@ -47,13 +68,26 @@ Download metadata and all the samples of the serie GSE13373 and rename them to t
 
 .. code-block:: bash
 
-    $ geoDL GSE13373
+    $ geoDL geo GSE13373
 
 Download only some samples:
 
 .. code-block:: bash
 
     $ geoDL GSE13373 -s GSM00001 GSM00003
+
+Download use a pre downloaded metadata and use column run_alias as name for the samples: 
+
+.. code-block:: bash
+
+    $ geoDL meta my_metadata.txt --column run_alias
+
+
+Use a ENA code instead of a GSE code:
+
+.. code-block:: bash
+
+    $ geoDL ena PRJEB13373
 
 Beta test
 ---------

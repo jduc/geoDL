@@ -1,9 +1,12 @@
 # Changelog
 
 ## TODO
-- Add output when selecting some samples 
+- Add output when selecting some samples
 
-## [Unreleased]
+## [1.0.b3] - 13/01/2017
+- Update the readme to match the new version
+- Added option to select which column to use in the metadata to name the samples
+- Added option to select which column to use in the metadata to name the samples
 
 ## [1.0.b2] - 07/09/2016
 - Added options to work with only ENA (skip geo)
