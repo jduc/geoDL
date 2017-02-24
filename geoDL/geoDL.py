@@ -17,8 +17,9 @@ from bs4 import BeautifulSoup
 from subprocess import call
 from colorama import init, Fore
 from six.moves.urllib.request import urlopen, urlretrieve
+from urllib.error import URLError
 
-__version__ = 'v1.0.b3'
+__version__ = 'v1.0.b4'
 logo="""
 ################################################################################
                ___  _
@@ -101,8 +102,10 @@ ena:  ENA study accession number, eg: PRJEB13373
         try:
             print(' > Visiting ENA website...')
             search_soup = BeautifulSoup(urlopen(search_url).read(), 'lxml')
-        except:
-            raiseError(' > ERROR: Page not found error... exiting!')
+        except URLError:
+            raiseError(' > ERROR: Page not found error at {} ... exiting!'.format(search_url))
+        except bs4.FeatureNotFound:
+            raiseError(' > ERROR: Module lxml not found. pip install --user lxml'.format(search_url))
         search_results = search_soup.find_all('secondary_id')
 
         if len(search_results) != 1:
@@ -157,14 +160,16 @@ ena:  ENA study accession number, eg: PRJEB13373
                 raiseError("  > ERROR: Fastq urls (ftp) is not in the metadata, \
                            make sure to add the column and try again.")
             if mode == 'geo' :
-                m = re.match('(GSM\d+)(?:_\d|$)', data['experiment_alias'])
+                m = re.search('(GSM\d+)', data[colname])
                 if m is None:
-                    raiseError('  > ERROR: The GSM {} was not found in the GEO page... exiting!')
+                    raiseError('  > ERROR: Regexp did not match...')
+                if len(m.groups()) >1:
+                    raiseError('  > ERROR: Regexp matched multiple times...')
                 gsm = m.group(1)
                 try:
                     outname = map_dict[gsm].replace(' ', '_')
                 except KeyError:
-                    raiseError('  > ERROR: The GSM {} was not found in the GEO page... exiting!')
+                    raiseError('  > ERROR: The GSM {} was not found in the GEO page...  exiting!'.format(gsm))
                 if len(samples) > 0 and gsm not in samples:
                     continue
                 log.write(gsm +  ' --> ' +  outname + '\n')

@@ -3,6 +3,11 @@
 ## TODO
 - Add output when selecting some samples
 
+## [1.0.b4] - 24/02/2017
+- Correct the misleading error message
+- Make colname args working as expected
+- Changed regexp to work in most conditions
+
 ## [1.0.b3] - 13/01/2017
 - Update the readme to match the new version
 - Added option to select which column to use in the metadata to name the samples

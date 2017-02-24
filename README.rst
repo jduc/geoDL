@@ -23,12 +23,8 @@ On linux and MacOSx
 
 .. code-block:: bash
 
-    $ sudo pip install geoDL
+    $ pip install --user geoDL
 
-To install locally, use the `--user` option:
-.. code-block:: bash
-
-    $ sudo pip install --user geoDL
 
 Note it is possible that the flag `--pre` is needed for installing the beta version.
 
