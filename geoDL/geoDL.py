@@ -114,7 +114,7 @@ ena:  ENA study accession number, eg: PRJEB13373
         search_results = search_soup.find_all('secondary_id')
 
         if len(search_results) != 1:
-               raiseError(' > ERROR: the XML at {} looks weird, cannot comply!'.format(search_url))
+               raiseError(' > ERROR: the XML at {} looks weird, probably missing entry!'.format(search_url))
 
         ena_access = search_results[0].contents[0]
         metafile = 'metadata_{}.xls'.format(inputvalue)
