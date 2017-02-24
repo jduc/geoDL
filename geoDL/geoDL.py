@@ -113,7 +113,7 @@ ena:  ENA study accession number, eg: PRJEB13373
         search_results = search_soup.find_all('secondary_id')
 
         if len(search_results) != 1:
-               raiseError(' > ERROR: Multiple or NO SRP link found, solve manually please... exiting!')
+               raiseError(' > ERROR: Multiple or NO fastq link found for some samples, solve manually please... exiting!')
 
         ena_access = search_results[0].contents[0]
         metafile = 'metadata_{}.xls'.format(inputvalue)
