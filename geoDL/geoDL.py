@@ -103,6 +103,7 @@ ena:  ENA study accession number, eg: PRJEB13373
 
         print('\nLooking for the metadata on ENA website...')
         search_url = 'http://www.ebi.ac.uk/ena/data/warehouse/search?query=%22geo_accession=%22{geo}%22%22&result=study&display=xml'.format(geo=inputvalue)
+        print(search_url)
         try:
             print(' > Visiting ENA website...')
             search_soup = BeautifulSoup(urlopen(search_url).read(), 'lxml')
@@ -113,7 +114,7 @@ ena:  ENA study accession number, eg: PRJEB13373
         search_results = search_soup.find_all('secondary_id')
 
         if len(search_results) != 1:
-               raiseError(' > ERROR: Multiple or NO fastq link found for some samples, solve manually please... exiting!')
+               raiseError(' > ERROR: the XML at {} looks weird, cannot comply!'.format(search_url))
 
         ena_access = search_results[0].contents[0]
         metafile = 'metadata_{}.xls'.format(inputvalue)
@@ -182,7 +183,7 @@ ena:  ENA study accession number, eg: PRJEB13373
             if len(data_urls) == 2:  # paired end
                 suffix = ['_R1', '_R2']
                 pair = True
-            elif len(data_urls) ==1 :  # single end
+            elif len(data_urls) == 1 :  # single end
                 suffix = ['']
                 pair = False
             else:
