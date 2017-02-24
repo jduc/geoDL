@@ -17,7 +17,11 @@ from bs4 import BeautifulSoup
 from subprocess import call
 from colorama import init, Fore
 from six.moves.urllib.request import urlopen, urlretrieve
-from urllib.error import URLError
+if sys.version_info >= (3, 0):
+    from urllib.error import URLError
+else:
+    from urllib2 import URLError
+
 
 __version__ = 'v1.0.b4'
 logo="""
