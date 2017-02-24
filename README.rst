@@ -2,7 +2,7 @@
 geoDL
 **************************************************
 
-**Please note that geoDL is in beta version, though expect bug and updates**
+**Please note that geoDL is in beta version, therefore expect bugd and updates**
 
 .. image:: geoDL/logo.png
     :height: 100px
