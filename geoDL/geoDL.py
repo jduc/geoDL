@@ -23,7 +23,7 @@ else:
     from urllib2 import URLError
 
 
-__version__ = 'v1.0.b4'
+__version__ = 'v1.0.b5'
 logo="""
 ################################################################################
                ___  _
@@ -144,11 +144,10 @@ ena:  ENA study accession number, eg: PRJEB13373
                         if c == colname:
                             idx = j
                 else:
-                    print(row[idx])
-                    samplenames.append(row[idx])
                     if row[idx] in samplenames:
                         raiseError("  > ERROR: Non uniq sample names in the column {col} "
                                    "of the meta file {meta}".format(col=colname, meta=metafile))
+                    samplenames.append(row[idx])
 
 ### Start the download from metadata
     print('Starting the downloads...\n')

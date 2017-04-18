@@ -3,6 +3,9 @@
 ## TODO
 - Add output when selecting some samples
 
+## [1.0.b5] - 18/04/2017
+- Corrected a bug in meta mode viewing duplicated samples when they were none
+
 ## [1.0.b4] - 24/02/2017
 - Correct the misleading error message
 - Make colname args working as expected
