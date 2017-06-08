@@ -131,23 +131,24 @@ ena:  ENA study accession number, eg: PRJEB13373
     elif mode == 'meta':
         print('\nUsing the {} metadata file ony (bypass GEO)...'.format(inputvalue))
         metafile = inputvalue
-        # check that the column selected for naming is uniq
-        with open(metafile) as f:
-            reader = csv.reader(f, delimiter='\t')
-            samplenames = []
-            for i,row in enumerate(reader):
-                if i == 0: 
-                    if colname not in row:
-                        raiseError("  > ERROR: Column {col} not in the metadata file "
-                                   "{meta}".format(col=colname, meta=metafile))
-                    for j, c in enumerate(row):
-                        if c == colname:
-                            idx = j
-                else:
-                    if row[idx] in samplenames:
-                        raiseError("  > ERROR: Non uniq sample names in the column {col} "
-                                   "of the meta file {meta}".format(col=colname, meta=metafile))
-                    samplenames.append(row[idx])
+
+    # check that the column selected for naming is uniq
+    with open(metafile) as f:
+        reader = csv.reader(f, delimiter='\t')
+        samplenames = []
+        for i,row in enumerate(reader):
+            if i == 0: 
+                if colname not in row:
+                    raiseError("  > ERROR: Column {col} not in the metadata file "
+                               "{meta}".format(col=colname, meta=metafile))
+                for j, c in enumerate(row):
+                    if c == colname:
+                        idx = j
+            else:
+                if row[idx] in samplenames:
+                    raiseError("  > ERROR: Non uniq sample names in the column {col} "
+                               "of the meta file {meta}\n".format(col=colname, meta=metafile))
+                samplenames.append(row[idx])
 
 ### Start the download from metadata
     print('Starting the downloads...\n')
