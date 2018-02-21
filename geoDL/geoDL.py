@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/env python3
 """
 Download data from the ENA website using a GSE geo accession number, ENA study accession number or
 metadata spreadsheet.
@@ -172,12 +172,12 @@ ena:  ENA study accession number, eg: PRJEB13373
                     raiseError('  > ERROR: Regexp matched multiple times...')
                 gsm = m.group(1)
                 try:
-                    outname = map_dict[gsm].replace(' ', '_').encode('utf-8')
+                    outname = map_dict[gsm].replace(' ', '_')
                 except KeyError:
                     raiseError('  > ERROR: The GSM {} was not found in the GEO page...  exiting!'.format(gsm))
                 if len(samples) > 0 and gsm not in samples:
                     continue
-                log.write(gsm +  ' --> ' +  outname + '\n')
+                log.write(gsm) +  ' --> ' +  outname + '\n')
             else:
                 outname = data[colname].replace(' ', '_')
             if len(data_urls) == 2:  # paired end
