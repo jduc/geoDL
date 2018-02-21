@@ -23,7 +23,7 @@ else:
     from urllib2 import URLError
 
 
-__version__ = 'v1.0.b5'
+__version__ = 'v1.0.b6'
 logo="""
 ################################################################################
                ___  _
@@ -172,7 +172,7 @@ ena:  ENA study accession number, eg: PRJEB13373
                     raiseError('  > ERROR: Regexp matched multiple times...')
                 gsm = m.group(1)
                 try:
-                    outname = map_dict[gsm].replace(' ', '_')
+                    outname = map_dict[gsm].replace(' ', '_').encode('utf-8')
                 except KeyError:
                     raiseError('  > ERROR: The GSM {} was not found in the GEO page...  exiting!'.format(gsm))
                 if len(samples) > 0 and gsm not in samples:

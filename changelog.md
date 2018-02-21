@@ -3,6 +3,8 @@
 ## TODO
 - Add output when selecting some samples
 
+## [1.0.b6] - 18/04/2017
+- Update to encoding for UTF-8 support
 ## [1.0.b5] - 18/04/2017
 - Corrected a bug in meta mode viewing duplicated samples when they were none
 
