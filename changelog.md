@@ -3,6 +3,8 @@
 ## TODO
 - Add output when selecting some samples
 
+## [1.0.b8] - 25/09/2018
+- Python2 future import removed
 ## [1.0.b7] - 25/09/2018
 - Fixed bug and typo
 - Tested python2 support

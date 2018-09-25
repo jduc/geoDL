@@ -6,8 +6,6 @@ metadata spreadsheet.
 url: https://github.com/jduc/geoDL
 author: Julien Duc <julien_dot_duc_dot_0_at_gmail_dot_com>
 """
-
-from __future__ import print_function
 import re
 import sys
 import argparse
@@ -23,7 +21,7 @@ else:
     from urllib2 import URLError
 
 
-__version__ = 'v1.0.b7'
+__version__ = 'v1.0.b8'
 logo="""
 ################################################################################
                ___  _
