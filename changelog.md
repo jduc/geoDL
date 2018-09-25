@@ -3,6 +3,10 @@
 ## TODO
 - Add output when selecting some samples
 
+## [1.0.b7] - 25/09/2018
+- Fixed bug and typo
+- Tested python2 support
+- Update README
 ## [1.0.b6] - 18/04/2017
 - Update to encoding for UTF-8 support
 ## [1.0.b5] - 18/04/2017

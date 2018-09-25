@@ -2,3 +2,4 @@ build
 dist
 geoDL.egg-info
 files.txt
+__pycache__

@@ -23,7 +23,7 @@ else:
     from urllib2 import URLError
 
 
-__version__ = 'v1.0.b6'
+__version__ = 'v1.0.b7'
 logo="""
 ################################################################################
                ___  _
@@ -137,7 +137,7 @@ ena:  ENA study accession number, eg: PRJEB13373
         reader = csv.reader(f, delimiter='\t')
         samplenames = []
         for i,row in enumerate(reader):
-            if i == 0: 
+            if i == 0:
                 if colname not in row:
                     raiseError("  > ERROR: Column {col} not in the metadata file "
                                "{meta}".format(col=colname, meta=metafile))
@@ -177,7 +177,7 @@ ena:  ENA study accession number, eg: PRJEB13373
                     raiseError('  > ERROR: The GSM {} was not found in the GEO page...  exiting!'.format(gsm))
                 if len(samples) > 0 and gsm not in samples:
                     continue
-                log.write(gsm) +  ' --> ' +  outname + '\n')
+                log.write(gsm) +  ' --> ' +  outname + '\n'
             else:
                 outname = data[colname].replace(' ', '_')
             if len(data_urls) == 2:  # paired end

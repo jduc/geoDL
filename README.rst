@@ -2,7 +2,7 @@
 geoDL
 **************************************************
 
-**Please note that geoDL is in beta version, therefore expect bugd and updates**
+**Please note that geoDL is in beta version, therefore expect bugs**
 
 .. image:: geoDL/logo.png
     :height: 100px
@@ -87,10 +87,8 @@ Use a ENA code instead of a GSE code:
 
 Beta test
 ---------
-- Test install on MacOSx and Linux
 - Test python2 support
 - Test handling of wget
-- Test a bunch of different GSE
 
 Changelog
 ---------
