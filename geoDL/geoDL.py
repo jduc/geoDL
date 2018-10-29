@@ -11,6 +11,7 @@ import sys
 import argparse
 import time
 import csv
+import bs4
 from bs4 import BeautifulSoup
 from subprocess import call
 from colorama import init, Fore
@@ -21,7 +22,7 @@ else:
     from urllib2 import URLError
 
 
-__version__ = 'v1.0.b9'
+__version__ = 'v1.0.b10'
 logo="""
 ################################################################################
                ___  _
@@ -191,7 +192,8 @@ ena:  ENA study accession number, eg: PRJEB13373
                     print(Fore.GREEN + '\n > Getting {}_{}...\n'.format(outname, suffix[r]) + 80*"=" + Fore.RESET)
                 else:
                     print(Fore.GREEN + '\n > Getting {}...\n'.format(outname, suffix[r]) + 80*"=" + Fore.RESET)
-                wgetcmd = ['wget', 'ftp://' + url, '-nH', '-O', outname + suffix[r] + '.fq.gz']
+                wgetcmd = ['wget', '--no-use-server-timestamps', '-nH',
+                           'ftp://' + url, '-O', outname + suffix[r] + '.fq.gz']
                 if args.dry:
                     print(' '.join(wgetcmd))
                 else:
