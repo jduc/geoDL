@@ -6,8 +6,9 @@ metadata spreadsheet.
 url: https://github.com/jduc/geoDL
 author: Julien Duc <julien_dot_duc_dot_0_at_gmail_dot_com>
 """
-import re
 import sys
+import os
+import re
 import argparse
 import time
 import csv
@@ -22,7 +23,7 @@ else:
     from urllib2 import URLError
 
 
-__version__ = 'v1.0.b10'
+__version__ = 'v1.0.b11'
 logo="""
 ################################################################################
                ___  _
@@ -71,6 +72,10 @@ ena:  ENA study accession number, eg: PRJEB13373
       Fetch the metadata directely on the ENA website""")
     parser.add_argument('--dry', action='store_true',
                         help="Don't actually download anything, just print the wget cmds")
+    parser.add_argument('--ascp', action='store_true',
+                        help="Use Aspera for the download (required already configured aspera")
+    parser.add_argument('--asperakey', type=str, default="/etc/asperaweb_id_dsa.openssh",
+                        help="The ssh key of apsera (/etc/asperaweb_id_dsa.openssh)")
     parser.add_argument('--samples', type=str, default=[], nargs='*',
                         help="Space separated list of GSM samples to download.\
                         For ENA mode, subset the metadata")
@@ -150,7 +155,8 @@ ena:  ENA study accession number, eg: PRJEB13373
                 samplenames.append(row[idx])
 
 ### Start the download from metadata
-    print('Starting the downloads...\n')
+    dlsoft = "aspera" if args.ascp else "wget"
+    print('Starting the downloads with {}\n')
     with open(metafile) as f, open('geoDL.logs', 'w') as log:
         for i, line in enumerate(f):
             if i == 0:
@@ -189,19 +195,43 @@ ena:  ENA study accession number, eg: PRJEB13373
                 raiseError(' > ERROR: number of urls in fastq url column is unexpected')
             for r, url in enumerate(data_urls):
                 if pair:
-                    print(Fore.GREEN + '\n > Getting {}_{}...\n'.format(outname, suffix[r]) + 80*"=" + Fore.RESET)
+                    print(Fore.GREEN + '\n > Getting {}{}...\n'.format(outname, suffix[r]) + 80*"=" + Fore.RESET)
                 else:
                     print(Fore.GREEN + '\n > Getting {}...\n'.format(outname, suffix[r]) + 80*"=" + Fore.RESET)
                 wgetcmd = ['wget', '--no-use-server-timestamps', '-nH',
                            'ftp://' + url, '-O', outname + suffix[r] + '.fq.gz']
+
+                ascp = os.popen("which ascp").read().strip()
+                ascpcmd = [ascp, '-T', '--policy', 'high', '-l', '10G',
+                        '-i', args.asperakey, '-P', '33001',
+                        url.replace("ftp.sra.ebi.ac.uk", "era-fasp@fasp.sra.ebi.ac.uk:"),
+                        outname + suffix[r] + '.fq.gz']
                 if args.dry:
-                    print(' '.join(wgetcmd))
+                    if args.ascp:
+                        print(' '.join(ascpcmd))
+                    else:
+                        print(' '.join(wgetcmd))
                 else:
-                    try:
-                        call(wgetcmd)
-                    except FileNotFoundError:
-                        raiseError('  > ERROR: wget not found, please install and try again !')
-                log.write(" ".join(wgetcmd) + '\n')
+                    if args.ascp:
+                        try:
+                            ret = call(ascpcmd)
+                            if ret != 0:
+                                print("  > ERROR: ascp returned {}".format(ret))
+                                print("  > cmd was: \n{}".format(" ".join(ascpcmd)))
+                                sys.exit(1)
+                        except FileNotFoundError:
+                            raiseError('  > ERROR: ascp not found, please install and try again !')
+                        log.write(" ".join(ascpcmd) + '\n')
+                    else:
+                        try:
+                            ret = call(wgetcmd)
+                            if ret != 0:
+                                print("  > ERROR: wget returned {}".format(ret))
+                                print("  > cmd was: \n{}".format(" ".join(wgetcmd)))
+                        except FileNotFoundError:
+                            raiseError('  > ERROR: wget not found, please install and try again !')
+                            sys.exit(1)
+                        log.write(" ".join(wgetcmd) + '\n')
 
     print(Fore.BLUE  + "\nIt's over, it's done!\n" + Fore.RESET)
 
